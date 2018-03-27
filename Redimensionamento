@@ -1,0 +1,106 @@
+#include <iostream>
+
+using namespace std;
+
+class vetor {
+    public:
+        vetor(int tamanho);
+        ~vetor();
+        void adiciona(int posicao,int num);
+        int printa(int posicao);
+        void redimensiona(int NovoTamanho);
+        int elementos();
+        void remove_duplicado();
+    protected:
+    
+    private:
+        int* dados;
+        int tam;
+        int inseridos;
+};
+
+vetor :: vetor(int tamanho){
+     dados = new int [tamanho];
+    tam=tamanho;
+    inseridos = 0;
+}
+vetor :: ~vetor (){
+    delete [] dados;
+}
+
+void vetor :: adiciona (int posicao, int num){
+    dados[posicao]=num;
+    inseridos++;
+    if (posicao>=tam){
+        this->redimensiona(inseridos+1);
+    }
+}
+    
+
+void vetor :: redimensiona(int NovoTamanho){
+    int* copia = new int [NovoTamanho];
+    for(int i=0;i<NovoTamanho;i++){
+        
+        copia[i]=dados[i];
+        
+    }
+    delete[] dados;
+    dados=copia;
+    tam=NovoTamanho;
+}
+int vetor :: elementos(){
+    return inseridos;
+}
+void vetor :: remove_duplicado (){
+    
+      for(int i=0;i<inseridos;i++){
+        for(int j=i+1;j<inseridos;j++){
+            if(dados[i]==dados[j]){
+                for(int x=j;x<inseridos-1;x++){
+                    dados[x]=dados[x+1];
+                    
+                }
+                inseridos--;
+            }
+        }
+    }
+
+    
+}   
+    
+    
+    
+    
+    
+int vetor :: printa (int posicao){
+    return dados[posicao];
+}
+    
+
+int main () {
+    
+    int n;
+    cin >> n;
+    vetor vet(n);
+    int num;
+    for(int i=0;i<100;i++){
+        cin >> num;
+        if (num<0){
+            i=100;
+        }
+        else {
+        vet.adiciona(i,num);
+    }
+}   
+    vet.remove_duplicado();
+    int x;
+    x=vet.elementos();
+
+
+    for(int i=0;i<x;i++){
+        cout << vet.printa(i) << " ";
+    }
+    return 0;
+}
+    
+    
