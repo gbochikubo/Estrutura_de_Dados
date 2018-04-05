@@ -1,0 +1,332 @@
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
+
+typedef int dado;
+
+class noh{
+    
+    friend class lista;
+    
+    private:
+        dado _dado;
+        noh* prox;
+        noh* ant;
+    
+    public:
+        noh(dado d=0);
+};
+
+noh::noh(dado d){
+    this->_dado = d;
+    this->prox = NULL;
+    this->ant = NULL;
+}
+
+class lista {
+    private:
+        int tamanho;
+        noh* primeiro;
+        noh* ultimo;
+        void removeTodos();
+    
+    public:	
+        lista();
+        lista(const lista& umalista);
+        ~lista();
+        void imprime();
+        void imprimeReversoAux(noh* umNoh);
+        void imprimeReverso();
+        void insereNoFim(dado d);
+        void insereNoInicio(dado d);
+        void insereNaPosicao(int posicao,dado d);
+        inline bool vazia();
+        void insere(dado d);
+        void removeNaPosicao(int posicao);
+        void imprimeAnt();
+        int procuraDado(dado x);
+        lista& operator = (const lista& umalista);
+        void troca(int p1, int p2);
+};  
+
+lista::lista(){
+    this->primeiro = NULL;
+    this->ultimo = NULL;
+    this->tamanho = 0;
+
+}
+
+lista::~lista(){
+    removeTodos();
+}
+
+lista::lista(const lista& umalista){
+	this->primeiro = NULL;
+	this->ultimo = NULL;
+	this->tamanho = 0;
+	
+	noh* aux = umalista.primeiro;
+	
+	while (aux != NULL){
+		
+		insereNoFim(aux->_dado);
+		aux = aux->prox;
+	}
+}
+
+lista& lista::operator =(const lista& umalista){
+	
+	
+	removeTodos(); // a lista que foi limpada foi a atual
+	
+	noh* aux = umalista.primeiro;
+	while( aux != NULL){
+		
+		insereNoFim(aux->_dado);
+		aux = aux->prox;
+	}
+	return *this;
+}
+	
+	
+
+void lista::removeTodos(){
+
+    noh* aux = primeiro;
+    noh* temp;
+    
+    while (aux != NULL){
+        temp = aux;
+        aux = aux->prox;
+        delete temp;
+    }
+    primeiro = NULL;
+    ultimo = NULL;
+    tamanho = 0;
+}
+
+
+inline bool lista:: vazia(){
+
+	return (primeiro == NULL);
+}
+
+void lista::insere(dado d){
+    insereNoFim(d);
+}
+
+void lista::insereNoFim(dado d){
+    
+    noh* novo = new noh (d);
+    
+    if(vazia()){
+        
+        primeiro = novo;
+        ultimo = novo;
+    }
+    
+    else {
+            
+        ultimo->prox = novo;
+        novo->ant = ultimo;
+        ultimo = novo;
+    }
+    tamanho ++;
+}
+
+int lista::procuraDado(dado x){
+    
+    int posaux = 0;
+    noh* aux = primeiro;
+    while ((aux != NULL) and (aux->_dado != x)){
+        aux = aux->prox;
+        posaux++;
+    }
+    return (posaux);
+}
+
+void lista::imprimeReverso(){
+    imprimeReversoAux(primeiro);
+    cout << endl;
+   // imprimeReversoAux(ultimo);
+    
+}
+
+void lista::imprimeAnt(){
+    noh* Aux = ultimo;
+    while(Aux != NULL){
+        cout << Aux->_dado << endl;;
+        Aux=Aux->ant;
+    }
+}
+
+void lista::imprimeReversoAux(noh* umNoh){
+    if(umNoh != NULL){                      // se o nó nao for nulo, imprimeReversoAux( nó->prox);
+        
+        imprimeReversoAux(umNoh->prox);
+        cout << umNoh->_dado << " ";
+    }
+}
+
+void lista::imprime(){
+    
+    noh* aux = primeiro;
+    
+    while(aux != NULL){
+        cout << aux->_dado << " ";
+        aux = aux->prox;
+    }
+    cout << endl;
+}
+
+void lista::insereNoInicio(dado d){
+    
+    noh* novo = new noh(d);
+    
+    if(vazia()){
+    
+        primeiro = novo;
+        ultimo = novo;
+    }
+    else {
+    
+        novo->prox = primeiro;
+        primeiro->ant = novo;
+        primeiro = novo;
+    }
+    tamanho ++;
+}
+
+void lista::insereNaPosicao(int posicao,dado d){
+    
+    noh* novo = new noh(d);
+    int posAux = 1;
+    noh* aux = primeiro;
+    if ((posicao <= tamanho) and (posicao >= 0)){
+    if(posicao == 0){
+        insereNoInicio(d);
+    }
+    else if(posicao == tamanho){
+        insereNoFim(d);
+    }
+    else {
+        
+        while (posAux < posicao-1){
+                
+            aux = aux->prox;
+            posAux++;
+        }
+        
+        novo->prox=aux->prox;
+        aux->prox = novo;
+        novo->ant = aux;
+        aux = novo;
+        }
+    tamanho ++;
+    }
+    else {
+        cerr << "Posicao Invalida ! " << endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+void lista::removeNaPosicao(int posicao){
+    
+    if ((posicao >= 0 ) and ( posicao <= tamanho)){
+        if(posicao == 0){
+            noh* AuxAnterior = primeiro;
+            primeiro = primeiro->prox;
+            primeiro->ant = NULL;
+            delete AuxAnterior;
+        }
+       else {
+        
+            int posAux = 1;
+            noh* aux = primeiro->prox;
+            noh* anterior = primeiro;
+        
+            while (posAux < posicao){
+        
+                anterior = aux;
+                aux = aux->prox;
+                posAux++;
+            }
+            if (aux == ultimo){
+                anterior->prox = NULL;
+                ultimo = anterior;
+                delete aux;
+            }
+            else {
+            anterior->prox = aux->prox;
+            noh* auxiliar = aux->prox;
+            auxiliar->ant = anterior;
+            delete aux;
+            }
+        }
+    }
+}
+
+
+void lista::troca (int p1, int p2){
+	
+	//int posaux = 0;
+	
+	if ((p1 == 0 ) and (p2 == tamanho-1)){
+	
+		noh* aux1 = primeiro;
+		noh* aux2 = ultimo;
+		aux1->ant = ultimo->ant;
+		aux2->prox = primeiro->prox;
+		aux1->prox = NULL;
+		aux2->ant = NULL;
+		primeiro = aux2;
+		ultimo = aux1;
+		
+	}
+	
+}
+		
+	  
+
+int main (){
+    
+    lista list;
+    
+    list.insere(10);
+    list.insere(20);
+    list.insere(30);
+    list.insere(40);
+    list.insere(50);
+    
+    list.imprime();
+    
+    list.insereNoInicio(5);
+    
+    list.imprime();
+    
+    list.insereNaPosicao(3,25);
+    
+    list.imprime();
+    
+    //list.insereNaPosicao(10,100);
+    
+    list.imprime();
+    
+    list.removeNaPosicao(6);
+    
+    list.imprime();
+    list.imprimeReverso();
+    //list.imprimeAnt();
+    cout << list.procuraDado(25) << endl;
+    
+    lista list2 = list;
+    list2.imprime();
+    
+    lista list3;
+    list3 = list2;
+    list3.imprime();
+    list3.troca(0,5);
+    list3.imprime();
+    return 0;
+}
