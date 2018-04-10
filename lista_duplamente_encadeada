@@ -34,6 +34,7 @@ class lista {
     public:	
         lista();
         lista(const lista& umalista);
+        lista(const dado umdado[],int tamanho);
         ~lista();
         void imprime();
         void imprimeReversoAux(noh* umNoh);
@@ -44,10 +45,18 @@ class lista {
         inline bool vazia();
         void insere(dado d);
         void removeNaPosicao(int posicao);
+        void removeDado(dado d);
         void imprimeAnt();
+        noh* acessaPosicao( int posicao);
+        dado acessaDado( int posicao);
         int procuraDado(dado x);
+        void bubble();
+        void buscaBinaria(dado x);
         lista& operator = (const lista& umalista);
         void troca(int p1, int p2);
+        void test();
+        lista& operator + (const lista& umalista);
+        lista& operator - (const lista& umalista);
 };  
 
 lista::lista(){
@@ -62,34 +71,96 @@ lista::~lista(){
 }
 
 lista::lista(const lista& umalista){
-	this->primeiro = NULL;
-	this->ultimo = NULL;
-	this->tamanho = 0;
-	
-	noh* aux = umalista.primeiro;
-	
-	while (aux != NULL){
-		
-		insereNoFim(aux->_dado);
-		aux = aux->prox;
-	}
+    this->primeiro = NULL;
+    this->ultimo = NULL;
+    this->tamanho = 0;
+    
+    noh* aux = umalista.primeiro;
+    
+    while (aux != NULL){
+        
+        insereNoFim(aux->_dado);
+        aux = aux->prox;
+    }
 }
 
-lista& lista::operator =(const lista& umalista){
-	
-	
-	removeTodos(); // a lista que foi limpada foi a atual
-	
-	noh* aux = umalista.primeiro;
-	while( aux != NULL){
-		
-		insereNoFim(aux->_dado);
-		aux = aux->prox;
-	}
-	return *this;
+lista::lista (const dado umdado[],int tamanho){
+    
+    this->primeiro = NULL;
+    this->ultimo = NULL;
+    this->tamanho = 0;
+
+    
+    for(int i = 0;i < tamanho; i++){
+
+    insereNoFim(umdado[i]);
+
+    }
+
 }
-	
-	
+lista& lista::operator =(const lista& umalista){
+    
+    
+    removeTodos(); // a lista que foi limpada foi a atual
+    
+    noh* aux = umalista.primeiro;
+    while( aux != NULL){
+        
+        insereNoFim(aux->_dado);
+        aux = aux->prox;
+    }
+    return *this;  // retorna o ponteiro do que foi alterado para o novo objeto
+}
+
+lista& lista:: operator +(const lista& umalista){
+        
+        noh* aux = umalista.primeiro;
+        
+        while (aux != NULL){
+            
+            insereNoFim(aux->_dado);
+            aux = aux->prox;
+            tamanho++;
+        }
+        return *this;
+}
+
+lista& lista:: operator -(const lista& umalista){
+        
+        noh* aux = umalista.primeiro;
+        noh* original = primeiro;
+        
+        while (aux != NULL){
+            if(aux->_dado == original->_dado){
+                removeDado(original->_dado);
+                
+        }
+        
+    }
+    return *this;
+}                
+        
+    
+    
+
+void lista::bubble(){
+    bool trocou;
+    
+    while(trocou) {
+        trocou = false;
+        
+        for (int i = 0; i < tamanho-2; i++)
+        {
+            if (acessaDado(i) > acessaDado(i+1)) {
+                troca(i, i+1);
+                trocou = true;                    
+            }
+        }
+    } 
+}
+
+    
+    
 
 void lista::removeTodos(){
 
@@ -112,8 +183,41 @@ inline bool lista:: vazia(){
 	return (primeiro == NULL);
 }
 
+
+
 void lista::insere(dado d){
     insereNoFim(d);
+}
+
+dado lista :: acessaDado (int posicao){
+    
+     if((posicao >=0) and (posicao <= tamanho)) {
+        noh* elemento = primeiro;
+        
+        for( int i = 0; i < posicao; i++)
+            elemento = elemento->prox;
+        
+        return (elemento->_dado);
+    } else {
+        cerr << "Posicao invalida!" << endl;
+        return dado(0);
+    }
+}
+    
+    
+
+noh* lista::acessaPosicao(int posicao) {
+    if((posicao >=0) and (posicao <= tamanho)) {
+        noh* elemento = primeiro;
+        
+        for( int i = 0; i < posicao; i++)
+            elemento = elemento->prox;
+        
+        return elemento;
+    } else {
+        cerr << "Posicao invalida!" << endl;
+        return NULL;
+    }
 }
 
 void lista::insereNoFim(dado d){
@@ -146,6 +250,19 @@ int lista::procuraDado(dado x){
     return (posaux);
 }
 
+/*noh* lista :: acessa_posicao(int p){
+    
+    
+    noh* aux = primeiro;
+    if ((p >=0) and (p <= tamanho)){
+        
+        for(int i = 0; i < p; i++){
+            aux = aux->prox;
+        }
+    }
+    return aux;
+}*/
+
 void lista::imprimeReverso(){
     imprimeReversoAux(primeiro);
     cout << endl;
@@ -156,9 +273,10 @@ void lista::imprimeReverso(){
 void lista::imprimeAnt(){
     noh* Aux = ultimo;
     while(Aux != NULL){
-        cout << Aux->_dado << endl;;
+        cout << Aux->_dado << " ";
         Aux=Aux->ant;
     }
+    cout << endl;
 }
 
 void lista::imprimeReversoAux(noh* umNoh){
@@ -168,6 +286,40 @@ void lista::imprimeReversoAux(noh* umNoh){
         cout << umNoh->_dado << " ";
     }
 }
+
+void lista:: buscaBinaria(dado x){
+    
+    bubble();
+    int inicio = 0;
+    int fim = tamanho-1;
+    int meio;
+    int posicao=-1;
+    while (inicio <= fim){
+        meio = (inicio+fim)/2;
+        
+        if (x == acessaDado(meio)){
+                posicao = meio;
+                inicio = fim+1;
+            }
+        else {
+            
+            if (x > acessaDado(meio)){
+                    inicio = meio+1;
+                }
+                else {
+                    fim = meio-1;
+                }
+            }
+        }
+    if (posicao == -1){
+        cout << "DADO INVALIDO" << endl;
+    }
+    else {
+        cout << posicao << endl;
+    }
+}
+                
+        
 
 void lista::imprime(){
     
@@ -267,27 +419,181 @@ void lista::removeNaPosicao(int posicao){
     }
 }
 
+void lista::removeDado(dado d){
+    
+    noh* aux = new noh(d);
+    noh* original = primeiro;
+    
+    while ( original != NULL){
+        if(original->_dado == aux->_dado){
+            if (original == primeiro){
+                noh* AuxAnterior = primeiro;
+                primeiro = primeiro->prox;
+                primeiro->ant = NULL;
+                delete AuxAnterior;
+            }
+            else if( original == ultimo){
+                noh* anterior = ultimo->ant;
+                anterior->prox = NULL;
+                ultimo = anterior;
+                delete anterior;
+            }
+            else {
+                noh* aux = original;
+                noh* anterior = original->ant;
+                noh* proximo = original->prox;
+                anterior->prox = proximo;
+                proximo->ant = anterior;
+                delete aux;
+                
+            }
+            tamanho--;
+        }
+        original = original->prox;
+    }
+}             
+            
+                
+            
+    
+
 
 void lista::troca (int p1, int p2){
-	
-	//int posaux = 0;
-	
-	if ((p1 == 0 ) and (p2 == tamanho-1)){
-	
-		noh* aux1 = primeiro;
-		noh* aux2 = ultimo;
-		aux1->ant = ultimo->ant;
-		aux2->prox = primeiro->prox;
-		aux1->prox = NULL;
-		aux2->ant = NULL;
-		primeiro = aux2;
-		ultimo = aux1;
-		
+
+    int x,y;
+    if(p1 > p2){
+        y = p1;
+        x = p2;
+    }
+    else {
+        y = p2;
+        x = p1;
+    }
+    
+    if ((x == 0 ) and (y == tamanho-1)){
+    
+     noh* Prim_prox = primeiro->prox; //  primeiro prox
+     noh* Ult_ant = ultimo->ant;   // ultimo ant
+     noh* pri = primeiro;   
+     noh* ult = ultimo;
+     Prim_prox->ant = ultimo;  // (2 elemento)->ant = ultimo
+     Ult_ant->prox = primeiro; // (penultimo elemento)->prox = primeiro
+     pri->ant = Ult_ant; // primeiro anterior = ultimo anterior
+     ult->prox = pri->prox; // ultimo proximo = primeiro prox
+     ult->ant = NULL; // ultimo anterior = NULL
+     pri->prox = NULL; // primeiro proximo = NULL
+     ultimo = pri;
+     primeiro = ult;
+    }
+    
+    else if (((y-x) == 1) and (x == 0)){
+        
+        noh* aux = primeiro;
+        noh* auxProx = primeiro->prox;
+        noh* terElemento = auxProx->prox;
+        terElemento->ant = aux;
+        aux->prox = terElemento;
+        aux->ant = auxProx;
+		auxProx->prox = aux;
+		auxProx->ant = NULL;
+		primeiro = auxProx;
+		primeiro->prox = aux;
 	}
 	
-}
+	else if (((y-x) == 1) and (y == tamanho-1)){
 		
-	  
+		noh* aux = ultimo;
+		noh* penultimo= ultimo->ant;
+		noh* antipenultimo = penultimo->ant;
+		
+		aux->ant = antipenultimo;
+		penultimo->ant = aux;
+		antipenultimo->prox = aux;
+		aux->prox = penultimo;
+		penultimo->prox = NULL;
+		
+		ultimo = penultimo;
+	}
+	
+	else if((y-x)==1){
+		
+		noh* anterior = acessaPosicao(x-1);
+		noh* proximo = acessaPosicao(y+1);
+		noh* auxX = acessaPosicao(x);
+		noh* auxY = acessaPosicao(y);
+		
+		anterior->prox = auxY;
+		auxY->prox = auxX;
+		auxX->prox = proximo;
+		auxY->ant = anterior;
+		auxX->ant = auxY;
+		proximo->ant = auxX;
+	
+	}
+	
+	else if((x == 0) and (y != tamanho-1)){
+		
+		cout<<"ENTROU" << endl;
+		noh* auxX = acessaPosicao(x);
+		noh* auxY = acessaPosicao(y);
+		noh* proximoX = auxX->prox;
+		noh* proximoY = auxY->prox;
+		noh* anteriorY = auxY->ant;
+		
+		
+		auxX->prox = proximoY;
+		anteriorY->prox = auxX;
+		auxY->prox = proximoX;
+		proximoY->ant = auxX;
+		auxX->ant = anteriorY;
+		proximoX->ant = auxY;
+		auxY->ant = NULL;
+		primeiro = auxY;
+	}
+	
+	else if((y == tamanho -1) and (x != 0)){
+		
+		noh* auxX = acessaPosicao(x);
+		noh* auxY = acessaPosicao(y);
+		noh* anteriorX = auxX->ant;
+		noh* anteriorY = auxY->ant;
+		noh* proximoX = auxX->prox;
+		
+		auxY->ant = anteriorX;
+		auxX->ant = anteriorY;
+		proximoX->ant = auxY;
+		anteriorX->prox = auxY;
+		auxY->prox = proximoX;
+		anteriorY->prox = auxX;
+		auxX->prox = NULL;
+		ultimo = auxX;
+	}
+	
+	else {
+		
+		noh* auxX = acessaPosicao(x);
+		noh* auxY = acessaPosicao(y);
+		noh* anteriorX = auxX->ant;
+		noh* anteriorY = auxY->ant;
+		noh* proximoX = auxX->prox;
+		noh* proximoY = auxY->prox;
+		
+		anteriorX->prox=auxY;
+		auxX->prox = proximoY;
+		anteriorY->prox = auxX;
+		auxY->prox = proximoX;
+		proximoY->ant = auxX;
+		auxY->ant = anteriorX;
+		auxX->ant = anteriorY;
+		proximoX->ant = auxY;
+	}
+		
+			
+	
+		
+ 
+   
+}
 
 int main (){
     
@@ -299,34 +605,16 @@ int main (){
     list.insere(40);
     list.insere(50);
     
+    lista list2;
+    list2.insere(1);
+    list2.insere(2);
+    list2.insere(20);
+    list2.insere(40);
+    list2.insere(5);
+    
+    //list - list2;
     list.imprime();
-    
-    list.insereNoInicio(5);
-    
-    list.imprime();
-    
-    list.insereNaPosicao(3,25);
-    
-    list.imprime();
-    
-    //list.insereNaPosicao(10,100);
-    
-    list.imprime();
-    
-    list.removeNaPosicao(6);
-    
-    list.imprime();
-    list.imprimeReverso();
-    //list.imprimeAnt();
-    cout << list.procuraDado(25) << endl;
-    
-    lista list2 = list;
     list2.imprime();
     
-    lista list3;
-    list3 = list2;
-    list3.imprime();
-    list3.troca(0,5);
-    list3.imprime();
     return 0;
 }
