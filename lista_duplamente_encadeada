@@ -58,7 +58,8 @@ class lista {
         lista& operator + (const lista& umalista);
         lista& operator - (const lista& umalista);
         void removeDuplicado();
-        void divide(int n);
+        void divide(int n,lista& umalista);
+        void inverte();
 };  
 
 lista::lista(){
@@ -498,10 +499,6 @@ void lista::removeDado(dado d){
 }             
             
                 
-            
-    
-
-
 void lista::troca (int p1, int p2){
 
     int x,y;
@@ -634,7 +631,49 @@ void lista::troca (int p1, int p2){
 		
 }
 
-//void lista :: divide(int n){
+void lista :: divide(int n, lista& umalista){
+	
+	noh* aux = primeiro;
+	aux = acessaPosicao(n);
+	
+	while (aux != NULL){
+		
+		umalista.insere(aux->_dado);
+		cout << "AUX" << aux->_dado << endl;
+		removeDado(aux->_dado);
+		aux=aux->prox;
+	}
+	
+}
+
+void lista :: inverte(){
+	
+	noh* aux = primeiro;
+	int tam=tamanho;
+	int vetor[tam];
+	int i=0;
+	//cout << tamanho << "TAM";
+	while(aux != NULL){
+		//cout << "AUX" << " " << aux->_dado << endl;
+		vetor[i] = aux->_dado;
+		aux=aux->prox;
+		i++;
+		
+	}
+	
+	removeTodos();
+	
+	for(int i =0; i < tam; i++){
+	
+		insereNoInicio(vetor[i]);
+	}
+	
+}
+	
+	
+	
+	
+	
     
      
 
@@ -645,24 +684,24 @@ int main (){
     list.insere(10);
     list.insere(20);
     list.insere(30);
-    list.insere(10);
+    list.insere(40);
     list.insere(50);
     list.insere(60);
-    list.insere(30);
+    list.insere(70);
     
     lista list2;
     list2.insere(30);
-    list2.insere(2);
+    list2.insere(20);
     list2.insere(20);
     list2.insere(40);
     list2.insere(5);
-   
+	list2.insere(20);
     lista list3;
     
-    list3 = list-list2;
-    list3.imprime();
-    list.buscaBinaria(100);
-    
+	list.inverte();
+	list.imprime();
+	list.imprimeReverso();
+	
     
     
     return 0;
