@@ -57,6 +57,8 @@ class lista {
         void test();
         lista& operator + (const lista& umalista);
         lista& operator - (const lista& umalista);
+        void removeDuplicado();
+        void divide(int n);
 };  
 
 lista::lista(){
@@ -131,10 +133,17 @@ lista& lista:: operator -(const lista& umalista){
         noh* original = primeiro;
         
         while (aux != NULL){
+          
+            while (original != NULL){
+       
             if(aux->_dado == original->_dado){
                 removeDado(original->_dado);
                 
+            }
+            original = original->prox;
         }
+        aux = aux->prox;
+        original = primeiro;
         
     }
     return *this;
@@ -158,6 +167,35 @@ void lista::bubble(){
         }
     } 
 }
+
+void lista :: removeDuplicado(){
+        
+        noh* original;
+        noh* aux = primeiro;
+        original = aux->prox;
+        
+       
+            
+        while ((aux != NULL)and(original != NULL)){
+            //~ cout << "AUX" << " " << aux->_dado << endl;
+            //~ cout << "ORIGINAL" << " " <<  original->_dado << endl << endl;
+            
+          
+            while (original != NULL){
+                //~ cout << "ORIGINAL ANTES DA REMOÇAO" << "  " << original->_dado << endl;
+            if ( aux-> _dado == original->_dado){
+                    
+                    
+                    removeDado(original->_dado);
+                }
+                //~ cout << "ORIGINAL DENTRO DO WHILE" << "    "  << original->_dado << endl;
+                original = original->prox;
+            }
+            aux = aux->prox;
+            original = aux->prox;
+        }
+    }
+                    
 
     
     
@@ -421,35 +459,41 @@ void lista::removeNaPosicao(int posicao){
 
 void lista::removeDado(dado d){
     
-    noh* aux = new noh(d);
+   // noh* aux = new noh(d);
     noh* original = primeiro;
-    
+    bool trocou=true;
     while ( original != NULL){
-        if(original->_dado == aux->_dado){
-            if (original == primeiro){
+        if(original->_dado == d){
+            if ((original == primeiro)and(trocou)){
                 noh* AuxAnterior = primeiro;
                 primeiro = primeiro->prox;
                 primeiro->ant = NULL;
                 delete AuxAnterior;
+                trocou= false;
             }
-            else if( original == ultimo){
+            else if(( original == ultimo)and(trocou)){
                 noh* anterior = ultimo->ant;
                 anterior->prox = NULL;
                 ultimo = anterior;
-                delete anterior;
+                
+                trocou = false;
             }
             else {
+                if(trocou){
                 noh* aux = original;
                 noh* anterior = original->ant;
                 noh* proximo = original->prox;
                 anterior->prox = proximo;
                 proximo->ant = anterior;
                 delete aux;
+                trocou = false;
+                }
                 
             }
             tamanho--;
         }
         original = original->prox;
+      
     }
 }             
             
@@ -588,12 +632,11 @@ void lista::troca (int p1, int p2){
 		proximoX->ant = auxY;
 	}
 		
-			
-	
-		
- 
-   
 }
+
+//void lista :: divide(int n){
+    
+     
 
 int main (){
     
@@ -602,19 +645,25 @@ int main (){
     list.insere(10);
     list.insere(20);
     list.insere(30);
-    list.insere(40);
+    list.insere(10);
     list.insere(50);
+    list.insere(60);
+    list.insere(30);
     
     lista list2;
-    list2.insere(1);
+    list2.insere(30);
     list2.insere(2);
     list2.insere(20);
     list2.insere(40);
     list2.insere(5);
+   
+    lista list3;
     
-    //list - list2;
-    list.imprime();
-    list2.imprime();
+    list3 = list-list2;
+    list3.imprime();
+    list.buscaBinaria(100);
+    
+    
     
     return 0;
 }
