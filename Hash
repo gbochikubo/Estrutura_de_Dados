@@ -1,0 +1,83 @@
+#include <iostream>
+#include <cstdlib>
+#include <string>
+
+using namespace std;
+
+const int primo = 13;
+
+int funcaoHash(string s, int M){
+
+    long h = 0;
+    
+    for(int i = 0; i < s.length(); i++){
+        
+        h = (primo * h + s[i]) % M;
+    }
+}
+
+class noh{
+    friend class tabelaHash;
+    private:
+        string chave;
+        string valor;
+        noh* proximo;
+    
+    public:
+        noh();
+};
+
+noh :: noh(){
+    this->chave = " ";
+    this->valor = " ";
+    proximo = NULL;
+}
+
+class tabelaHash{
+    
+    private:
+        noh** elementos;
+        int capacidade;
+    public:
+        tabelaHash(int cap = 100);
+        ~tabelaHash();
+        void insere(string c, string v);
+        string recupera(string c);
+};
+
+tabelaHash :: tabelaHash (int cap){
+        
+        this->capacidade = cap;
+        elementos = new noh[cap];
+        for(int i = 0; i < cap; i++){
+            elementos[i] = NULL;
+        }
+}
+
+tabelaHash :: tabelaHash (){
+    
+    for(int i = 0; i < capacidade; i++){
+        noh* atual = elementos[i];
+        
+        while (atual != NULL){
+            noh* aux = atual;
+            atual = atual->prox;
+            delete aux;
+        }
+    }
+    delete[] elementos;
+}
+
+string tabelaHash :: recupera(string c){
+    
+    int h;
+    h = funcaoHash(c, capacidade);
+    
+    if((elementos[h] != NULL) and (elementos[h]->chave == c)){
+        return elementos[h]->valor;
+    }
+    
+    
+    
+
+int main (){
