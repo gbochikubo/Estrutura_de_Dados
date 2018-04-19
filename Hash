@@ -1,83 +1,204 @@
 #include <iostream>
-#include <cstdlib>
 #include <string>
+#include <cstdlib>
 
 using namespace std;
 
 const int primo = 13;
 
 int funcaoHash(string s, int M){
-
-    long h = 0;
     
-    for(int i = 0; i < s.length(); i++){
-        
+    long h;
+    for(unsigned int i = 0; i < s.length(); i++){
         h = (primo * h + s[i]) % M;
     }
-}
+    return h;
+};
 
 class noh{
     friend class tabelaHash;
+    
     private:
         string chave;
         string valor;
         noh* proximo;
-    
     public:
         noh();
 };
 
 noh :: noh(){
-    this->chave = " ";
-    this->valor = " ";
-    proximo = NULL;
+    this -> chave = " ";
+    this -> valor = " ";
+    this -> proximo = NULL;
 }
 
 class tabelaHash{
     
     private:
-        noh** elementos;
-        int capacidade;
+     noh** elementos; // é um vetor de noh
+     int capacidade;
+    
     public:
-        tabelaHash(int cap = 100);
-        ~tabelaHash();
-        void insere(string c, string v);
-        string recupera(string c);
+     tabelaHash(int cap = 100);
+     ~tabelaHash();
+     void insere(string c, string v);
+     string recupera(string c);
+     void printa();
+     void altera(string c, string v);
+     void remove(string c);
 };
 
-tabelaHash :: tabelaHash (int cap){
-        
-        this->capacidade = cap;
-        elementos = new noh[cap];
-        for(int i = 0; i < cap; i++){
-            elementos[i] = NULL;
-        }
-}
-
-tabelaHash :: tabelaHash (){
+tabelaHash :: tabelaHash(int cap){
     
+    capacidade = cap;
+    elementos = new noh* [cap];
     for(int i = 0; i < capacidade; i++){
+        this -> elementos[i] = NULL;
+    }
+}  
+
+tabelaHash :: ~tabelaHash(){
+    
+    for(int i = 0 ; i < capacidade; i ++){
         noh* atual = elementos[i];
-        
-        while (atual != NULL){
+        while ( atual != NULL){
             noh* aux = atual;
-            atual = atual->prox;
+            atual = atual->proximo;
             delete aux;
         }
     }
-    delete[] elementos;
+    delete [] elementos;
 }
 
-string tabelaHash :: recupera(string c){
+
+void tabelaHash :: insere(string c, string v){
+    
+    int h;
+    h = funcaoHash(c, capacidade);
+    if(recupera(c) == "NÃO ENCONTRADO!"){
+        if(elementos[h] == NULL){
+            elementos[h] = new noh;
+            elementos[h]->valor = v;
+            elementos[h]->chave = c;
+        }
+        else {
+            cout << "COLIDIU :( " << c << endl;
+            noh* atual = elementos[h];
+            while (atual->proximo != NULL){
+                atual = atual->proximo;
+            }
+            noh* novo = new noh;
+            novo->valor = v;
+            novo->chave = c;
+            atual->proximo = novo;
+        }
+    }
+        else {
+            cout << "ITEM JÁ ESTÁ NA TABELA PARÇA  -->>  " << c << endl;
+        }
+}
+
+
+
+
+string tabelaHash :: recupera (string c) {
     
     int h;
     h = funcaoHash(c, capacidade);
     
-    if((elementos[h] != NULL) and (elementos[h]->chave == c)){
-        return elementos[h]->valor;
+    if (( elementos[h] != NULL) and (elementos[h] -> chave == c)){
+            return elementos[h]->valor;
+        }
+    else {
+        noh* atual = elementos[h];
+        while((atual != NULL) and (atual->chave != c)){
+            atual = atual->proximo;
+        }
+        if (( atual != NULL) and (atual-> chave == c)){
+            return atual ->valor;
+        }
+        else { 
+            return "NÃO ENCONTRADO!";
+        }
     }
+}
+
+void tabelaHash :: printa(){
     
+    for(int i = 0; i < capacidade; i++){
+        noh* atual = elementos[i];
+        while(atual != NULL){
+            cout << "[ " << atual->chave << " / " << atual->valor << " ]" << "-> NULL" << endl;
+            atual = atual->proximo;
+        }
+    }
+}
+
+void tabelaHash :: altera(string c, string v){
+        int h;
+        h = funcaoHash(c,capacidade);
+        if((elementos[h] != NULL) and (elementos[h]->chave == c)){
+            elementos[h]->valor = v;
+        }
+        else {
+            noh* atual = elementos[h];
+            while ((atual != NULL) and (atual->chave !=c)){
+                atual = atual->proximo;
+            }
+            if(( atual != NULL) and (atual->chave ==c )){
+                atual->valor = v;
+            }
+            else {
+                cout << "CHAVE NÃO ENCONTRADA!";
+            }
+        }
+}
+ 
+void tabelaHash :: remove(string c){
     
+        int h;
+        h = funcaoHash(c,capacidade);
+        if ((elementos[h] != NULL) and (elementos[h]->chave == c)){
+            noh* atual = elementos[h];
+            elementos[h] = elementos[h]->proximo;
+            delete atual;
+        }
+        else {
+            noh* atual = elementos[h];
+            noh* anterior;
+            while (( atual != NULL) and (atual->chave != c)){
+                anterior = atual;
+                atual = atual->proximo;
+            }
+            if ((atual != NULL) and (atual-> chave == c)){
+                anterior->proximo = atual->proximo;
+                delete atual;
+                
+            }
+            else { 
+                cout << "CHAVE NÃO ENCONTRADA !" << endl;
+            }
+        }
+}
+        
     
 
 int main (){
+    
+    tabelaHash x(2);
+    
+    x.insere("gui MELO", "mama eu");
+    x.insere("hello", "world");
+    x.insere("hello", "world");
+
+    
+    x.printa();
+    
+    cout << endl;
+    cout << endl;
+    x.altera("gui MELO", "mama o leo");
+    x.printa();
+    
+    x.remove("hello");
+    x.printa();
+}
