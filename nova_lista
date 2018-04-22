@@ -1,0 +1,356 @@
+#include <iostream>
+#include <cstdlib>
+
+
+using namespace std;
+
+typedef int dado;
+
+class noh{
+	friend class lista;
+	private:
+		dado _dado;
+		noh* proximo;
+		noh* anterior;
+	public:
+		noh(dado d);
+};
+
+noh :: noh(dado d){
+
+	this -> _dado = d;
+	this -> proximo = NULL;
+	this -> anterior = NULL;
+}
+
+class lista{
+	
+	private:
+		int tamanho;
+		noh* primeiro;
+		noh* ultimo;
+		void apagaTudo();
+	
+	public:
+		lista();
+		~lista();
+		lista(const lista& umaLista);
+		inline bool vazia();
+		void insere(dado d);
+		void insereNoFim(dado d);
+		void insereNaPosicao(int posicao , dado d);
+		void insereNoInicio(dado d);
+		void remove(int posicao);
+		void imprime();
+		void imprimeReverso();
+		lista& operator = (const lista& umaLista);
+		noh* acessaPosicao(int posicao);
+		void troca(int p1, int p2);
+};
+
+lista :: lista(){
+	this -> tamanho = 0;
+	this -> primeiro = NULL;
+	this -> ultimo = NULL;
+}
+
+lista :: ~lista(){
+	apagaTudo();
+}
+
+lista :: lista(const lista& umaLista){
+	tamanho = 0;
+	primeiro = NULL;
+	ultimo = NULL;
+	
+	noh* aux = umaLista.primeiro;
+	
+	while(aux != NULL){
+		insere(aux->_dado);
+		aux = aux->proximo;
+	}
+	
+}
+
+void lista :: apagaTudo(){
+	
+	noh* aux = primeiro;
+	
+	while (aux != NULL){
+			noh* atual = aux;
+			aux = aux->proximo;
+			delete atual;
+		}
+	this->primeiro = NULL;
+	this->ultimo = NULL;
+	this->tamanho = 0;
+}	
+
+inline bool lista :: vazia(){
+	return (primeiro==NULL and ultimo==NULL);
+}
+
+void lista :: insereNoFim(dado d){
+	
+	noh* novo = new noh(d);
+	
+	if(vazia()){
+		
+		primeiro = novo;
+		ultimo = novo;
+	}
+	
+	else {
+		//~ noh* aux = primeiro;
+		//~ while (aux ->proximo != NULL){
+			//~ aux = aux->proximo;
+		//~ }
+		//~ aux->proximo = novo;
+		ultimo->proximo = novo;
+		novo->anterior = ultimo;
+		ultimo = novo;
+	}
+	tamanho++;
+}
+
+void lista :: imprime(){
+	noh* aux = primeiro;
+	while ( aux != NULL){
+		cout << aux->_dado << " ";
+		aux = aux->proximo;
+	}
+	cout << endl;
+}
+
+void lista :: imprimeReverso(){
+	noh* aux = ultimo;
+	while(aux != NULL){
+		cout << aux->_dado << " ";
+		aux = aux->anterior;
+	}
+	cout << endl;
+}
+
+void lista :: insere(dado d){
+	insereNoFim(d);
+}
+
+void lista :: insereNoInicio(dado d){
+	
+	noh* novo = new noh(d);
+	if ((primeiro == NULL) and (ultimo == NULL)){
+			primeiro = novo;
+			ultimo = novo;
+		}
+		else {
+			primeiro->anterior = novo;
+			novo->proximo = primeiro;
+			primeiro = novo;
+		}
+		tamanho++;
+}
+
+void lista :: insereNaPosicao(int posicao, dado d){
+	
+	noh* novo = new noh(d);
+	int cont =0;
+	if((posicao >= 0) and (posicao <= tamanho)){
+		if(posicao == 0){
+			insereNoInicio(d);
+		}
+		else if(posicao == tamanho){
+			insereNoFim(d);
+		}
+		else {
+			noh* x = primeiro;
+			while (cont < posicao-1){
+				x = x->proximo;
+				cont ++;
+			}
+			
+			noh* y = x->proximo;
+			x->proximo = novo;
+			novo->anterior = x;
+			y->anterior = novo;
+			novo->proximo = y;
+		}
+	}
+	else {
+		cerr << "POSIÇÃO INVALIDA !" << endl;
+	}
+}
+
+void lista :: remove(int posicao){
+	
+	if((posicao >= 0) and (posicao <tamanho)){
+		int cont = 0;
+		noh* aux = primeiro;
+		if(posicao == 0){
+			noh* y = aux->proximo;
+			y->anterior = NULL;
+			primeiro = y;
+		}
+		else if(posicao == tamanho-1){
+			noh* y = ultimo;
+			aux = y->anterior;
+			aux->proximo = NULL;
+			ultimo = aux;
+		}
+		else {
+			while(cont < posicao){
+				aux = aux->proximo;
+				cont++;
+			}
+			noh* x = aux->anterior;
+			noh* y = aux->proximo;
+			x->proximo = y;
+			y->anterior = x;
+			delete aux;
+		}
+	}
+	else {
+		cerr << "POSIÇÃO INVALIDA !" << endl;
+	}
+}
+
+lista& lista:: operator = (const lista& umaLista){
+	
+	apagaTudo();
+	
+	noh* aux = umaLista.primeiro;
+	
+	while(aux != NULL){
+		insereNoFim(aux->_dado);
+		aux = aux->proximo;
+	}
+	return *this;
+}	
+
+noh* lista :: acessaPosicao(int posicao){
+	if((posicao >=0)and(posicao<tamanho)){
+		noh* elemento = primeiro;
+		for(int i=0; i < posicao;i++){
+			elemento = elemento->proximo;
+		}
+		cout << elemento->_dado << endl;
+		return elemento;	
+	}
+	else {
+		cerr << "POSICÃO INVALIDA !" << endl;
+		return NULL;
+	}
+	
+}
+
+void lista :: troca(int p1, int p2){
+	
+	int maior = p2;
+	if(p1 > p2){
+		maior = p1;
+		p1 = p2;
+		p2 = maior;
+	}
+	
+	if((p1 >= 0) and (p2 <= tamanho-1)){
+		
+		if((p1 == 0) and (p2 == tamanho-1)){
+			noh* x = acessaPosicao(p1);
+			noh* y = acessaPosicao(p2);
+			noh* xProx = x->proximo;
+			noh* yAnt = y->anterior;
+			
+			x->anterior = yAnt;
+			xProx->anterior = y;
+			y->anterior = NULL;
+			x->proximo = NULL;
+			yAnt->proximo = x;
+			y->proximo = xProx;
+			primeiro = y;
+			ultimo =x;
+		}
+		else if((p1 == 0) and (p2 == 1)){
+			noh* x = acessaPosicao(p1);
+			noh* y = acessaPosicao(p2);
+			noh* yProx = y->proximo;
+			x->proximo = yProx;
+			x->anterior = y;
+			y->proximo = x;
+			y->anterior = NULL;
+			yProx->anterior = x;
+			primeiro = y;
+		}
+		else if((p1 == tamanho-2) and (p2 == tamanho-1)){
+			noh* x = acessaPosicao(p1);
+			noh* y = acessaPosicao(p2);
+			noh* xAnt = x->anterior;
+			xAnt->proximo = y;
+			x->proximo = NULL;
+			y->proximo = x;
+			x->anterior = y;
+			y->anterior = xAnt;
+			ultimo = x;
+		}
+		
+		else if((p1 == 0) and (p2 != tamanho-1)){
+			
+			noh* x = acessaPosicao(p1);
+			noh* y = acessaPosicao(p2);
+			noh* xProx = x->proximo;
+			noh* yAnt = y->anterior;
+			noh* yProx = y->proximo;
+			x->proximo = yProx;
+			y->proximo = xProx;
+			yAnt->proximo = x;
+			x->anterior = yAnt;
+			y->anterior = NULL;
+			yProx->anterior = x;
+			xProx->anterior = y;
+			primeiro = y;
+		}
+		else if ((p1 != 0) and (p2 == tamanho-1)){
+			
+			noh* x = acessaPosicao(p1);
+			noh* y = acessaPosicao(p2);
+			noh* yAnt = y->anterior;
+			noh* xAnt = x->anterior;
+			noh* xProx = x->proximo;
+			x->proximo = NULL;
+			yAnt->proximo = x;
+			xAnt->proximo = y;
+			y->proximo = xProx;
+			x->anterior = yAnt;
+			xProx->anterior = y;
+			y->anterior = xAnt;
+			ultimo = x;
+		}
+	}
+}
+			
+			
+	
+
+int main(){
+	
+	lista list;
+	
+	list.insere(10);
+	list.insere(20);
+	list.insere(30);
+	list.insere(40);
+	list.insere(50);
+	
+	lista list2;
+	
+	list2.insere(100);
+	list2.insere(200);
+	list2.insere(300);
+	list2.insere(400);
+	list2.insere(500);
+	
+	list2.troca(2,4);
+	list2.imprime();
+	list2.imprimeReverso();
+	
+	return 0;
+}
+
