@@ -6,6 +6,8 @@ using namespace std;
 
 typedef int dado;
 
+
+
 class noh{
 	friend class lista;
 	private:
@@ -35,6 +37,7 @@ class lista{
 		lista();
 		~lista();
 		lista(const lista& umaLista);
+        lista(const dado umVetor[], int tam);
 		inline bool vazia();
 		void insere(dado d);
 		void insereNoFim(dado d);
@@ -44,8 +47,11 @@ class lista{
 		void imprime();
 		void imprimeReverso();
 		lista& operator = (const lista& umaLista);
+        lista& operator + (const lista& umaLista);
 		noh* acessaPosicao(int posicao);
 		void troca(int p1, int p2);
+        void bubble();
+        void buscaBinaria(dado elemento);
 };
 
 lista :: lista(){
@@ -56,6 +62,15 @@ lista :: lista(){
 
 lista :: ~lista(){
 	apagaTudo();
+}
+
+lista :: lista (const dado umVetor[], int tam){
+    this -> tamanho = 0;
+    this -> primeiro = NULL;
+    this -> ultimo = NULL;
+    for(int i = 0; i < tam; i++){
+        insereNoFim(umVetor[i]);
+    }
 }
 
 lista :: lista(const lista& umaLista){
@@ -232,7 +247,7 @@ noh* lista :: acessaPosicao(int posicao){
 		for(int i=0; i < posicao;i++){
 			elemento = elemento->proximo;
 		}
-		cout << elemento->_dado << endl;
+	
 		return elemento;	
 	}
 	else {
@@ -323,21 +338,119 @@ void lista :: troca(int p1, int p2){
 			y->anterior = xAnt;
 			ultimo = x;
 		}
+        else if((p2-p1)==1){
+		
+		noh* anterior = acessaPosicao(p1-1);
+		noh* proximo = acessaPosicao(p2+1);
+		noh* auxX = acessaPosicao(p1);
+		noh* auxY = acessaPosicao(p2);
+		
+		anterior->proximo = auxY;
+		auxY->proximo = auxX;
+		auxX->proximo = proximo;
+		auxY->anterior = anterior;
+		auxX->anterior = auxY;
+		proximo->anterior = auxX;
+        
 	}
+    else {
+		
+		noh* auxX = acessaPosicao(p1);
+		noh* auxY = acessaPosicao(p2);
+		noh* anteriorX = auxX->anterior;
+		noh* anteriorY = auxY->anterior;
+		noh* proximoX = auxX->proximo;
+		noh* proximoY = auxY->proximo;
+		
+		anteriorX->proximo=auxY;
+		auxX->proximo = proximoY;
+		anteriorY->proximo = auxX;
+		auxY->proximo = proximoX;
+		proximoY->anterior = auxX;
+		auxY->anterior = anteriorX;
+		auxX->anterior = anteriorY;
+		proximoX->anterior = auxY;
+        }
+    }
+}
+
+lista& lista :: operator +( const lista& umaLista){
+        
+    noh* aux = umaLista.primeiro;
+    while ( aux != NULL){
+        insereNoFim(aux->_dado);
+        aux = aux->proximo;
+    }
+    return *this;
+}
+
+
+void lista :: bubble () {
+    
+    bool trocou = true;
+    
+    while (trocou) {
+        trocou = false;
+    
+        for(int i = 0; i < tamanho-1; i++){
+            
+            noh* aux = acessaPosicao(i);
+            noh* aux2 = acessaPosicao(i+1);
+            
+            if(aux->_dado > aux2->_dado){
+                troca(i, i+1);
+                trocou = true;
+            }
+        }
+    }
+}
+
+
+void lista :: buscaBinaria(dado elemento){
+    bubble();
+    
+    int inicio = 0;
+    int fim = tamanho-1;
+    int meio;
+    int posicao = -1;
+    
+    while (inicio <= fim){
+        meio = (inicio+fim)/2;
+        noh* aux = acessaPosicao(meio);
+
+        if(aux->_dado == elemento){
+            posicao = meio;
+            inicio = fim+1;
+        }
+        else {
+            if (elemento > aux->_dado){
+                inicio = meio+1;
+            }
+            else {
+                fim = meio-1;
+            }
+        }
+    }
+    if(posicao == -1){
+        cout <<"DADO NÃO ENCONTRADO !" << endl;
+    }
+    else {
+        cout << posicao << endl;
+    }
 }
 			
-			
+			 
 	
 
 int main(){
 	
 	lista list;
 	
-	list.insere(10);
 	list.insere(20);
-	list.insere(30);
-	list.insere(40);
 	list.insere(50);
+	list.insere(10);
+	list.insere(15);
+	list.insere(5);
 	
 	lista list2;
 	
@@ -346,10 +459,13 @@ int main(){
 	list2.insere(300);
 	list2.insere(400);
 	list2.insere(500);
-	
-	list2.troca(2,4);
-	list2.imprime();
-	list2.imprimeReverso();
+    
+    list.buscaBinaria(50);
+    
+    //list2.imprime();
+
+    
+    
 	
 	return 0;
 }
