@@ -52,6 +52,9 @@ class lista{
 		void troca(int p1, int p2);
         void bubble();
         void buscaBinaria(dado elemento);
+        void removeDuplicado(const lista& umaLista);
+        void removeDado(dado d);
+        void removeRepetido();
 };
 
 lista :: lista(){
@@ -438,9 +441,88 @@ void lista :: buscaBinaria(dado elemento){
         cout << posicao << endl;
     }
 }
-			
-			 
-	
+
+void lista :: removeDuplicado(const lista& umaLista){
+    
+    noh* aux = umaLista.primeiro;
+    noh* original = primeiro;
+
+    while(original != NULL){
+        aux = umaLista.primeiro;
+        while ((aux != NULL)){
+             cout << "original " << original->_dado;
+            cout << "/ aux  " << aux->_dado << endl;
+            
+            if ( aux->_dado == original->_dado){
+               removeDado(original->_dado);
+               
+                
+            }
+            aux = aux->proximo;
+        }
+        
+        original = original->proximo;
+        
+    }
+    
+}
+
+void lista :: removeDado(dado d){
+    
+    noh* aux = primeiro;
+    bool trocou = true;
+    
+    while ( aux != NULL){
+        
+        if ((aux->_dado == d)and (trocou)){
+            
+            if(aux == primeiro){
+                noh* segundo = aux->proximo;
+                segundo->anterior = NULL;
+                primeiro =segundo;
+                delete aux;
+                trocou = false;
+            }
+            else if ( aux == ultimo){
+                noh* penultimo = aux->anterior;
+                penultimo->proximo = NULL;
+                ultimo = penultimo;
+                delete aux;
+                trocou = false;
+            }
+            else {
+                noh* anterior = aux->anterior;
+                noh* posterior = aux->proximo;
+                anterior->proximo = posterior;
+                posterior->anterior = anterior;
+                delete aux;
+                trocou = false;
+            }
+        }
+        aux = aux->proximo;
+    }
+}
+
+void lista::removeRepetido(){
+    noh* aux = primeiro;
+    bool removeu = true;
+    
+    while (( aux->proximo!= NULL)){
+        cout << "entrou" << endl;
+        noh* copia = aux->proximo;
+    
+        while ((copia != NULL)and(removeu)){
+            cout << "entrou 2 " << endl;
+            if ( copia->_dado == aux->_dado){
+                removeDado(aux->_dado);
+                removeu = false;
+            }
+            copia = copia->proximo;
+        }
+        removeu = true;
+        aux = aux->proximo;
+    }
+}
 
 int main(){
 	
@@ -456,13 +538,13 @@ int main(){
 	
 	list2.insere(100);
 	list2.insere(200);
-	list2.insere(300);
+	list2.insere(100);
 	list2.insere(400);
-	list2.insere(500);
+	list2.insere(100);
     
-    list.buscaBinaria(50);
-    
-    //list2.imprime();
+   
+    list2.removeRepetido();
+    list2.imprime();
 
     
     
