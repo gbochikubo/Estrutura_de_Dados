@@ -48,6 +48,7 @@ class lista{
 		void imprimeReverso();
 		lista& operator = (const lista& umaLista);
         lista& operator + (const lista& umaLista);
+        lista& operator - (const lista& umaLista);
 		noh* acessaPosicao(int posicao);
 		void troca(int p1, int p2);
         void bubble();
@@ -55,6 +56,9 @@ class lista{
         void removeDuplicado(const lista& umaLista);
         void removeDado(dado d);
         void removeRepetido();
+        void divide(int n, lista& umaLista);
+        void inverte();
+        
 };
 
 lista :: lista(){
@@ -119,11 +123,6 @@ void lista :: insereNoFim(dado d){
 	}
 	
 	else {
-		//~ noh* aux = primeiro;
-		//~ while (aux ->proximo != NULL){
-			//~ aux = aux->proximo;
-		//~ }
-		//~ aux->proximo = novo;
 		ultimo->proximo = novo;
 		novo->anterior = ultimo;
 		ultimo = novo;
@@ -508,11 +507,10 @@ void lista::removeRepetido(){
     bool removeu = true;
     
     while (( aux->proximo!= NULL)){
-        cout << "entrou" << endl;
+
         noh* copia = aux->proximo;
     
         while ((copia != NULL)and(removeu)){
-            cout << "entrou 2 " << endl;
             if ( copia->_dado == aux->_dado){
                 removeDado(aux->_dado);
                 removeu = false;
@@ -524,29 +522,79 @@ void lista::removeRepetido(){
     }
 }
 
+void lista :: divide(int n, lista& umaLista){
+    
+    noh* aux = acessaPosicao(n);
+    cout << "AQUI " << aux->_dado << endl;
+    while(aux != NULL){
+        cout << "ENTROU " << aux->_dado << " XX " << endl;
+        umaLista.insere(aux->_dado);
+        removeDado(aux->_dado);
+        aux = aux->proximo;
+    }
+}
+
+void lista :: inverte (){
+    
+    noh* aux = primeiro;
+    
+    lista auxiliar;
+    
+    while(aux != NULL){
+        auxiliar.insereNoFim(aux->_dado);
+        aux = aux->proximo;
+    }
+    
+    apagaTudo();
+    
+    noh* copia = auxiliar.ultimo;
+    
+    while(copia != NULL){
+        insereNoFim(copia->_dado);
+        copia=copia->anterior;
+    }
+    auxiliar.apagaTudo();
+}
+
+lista& lista :: operator -(const lista& umaLista){
+    
+    noh* aux = umaLista.primeiro;
+    
+    while( aux != NULL){
+        noh* original = primeiro;
+        while(original != NULL){
+            if(aux->_dado == original->_dado){
+                removeDado(original->_dado);
+            }
+            original = original->proximo;
+        }
+        aux = aux->proximo;
+    }
+    return *this;
+}
+    
+
 int main(){
 	
 	lista list;
 	
-	list.insere(20);
-	list.insere(50);
-	list.insere(10);
-	list.insere(15);
-	list.insere(5);
+	list.insere(150);
+	list.insere(200);
+	list.insere(300);
+	list.insere(450);
+	list.insere(500);
 	
 	lista list2;
 	
 	list2.insere(100);
 	list2.insere(200);
-	list2.insere(100);
+	list2.insere(300);
 	list2.insere(400);
-	list2.insere(100);
-    
-   
-    list2.removeRepetido();
-    list2.imprime();
+	list2.insere(500);
 
-    
+        lista list3;
+        list3 = list2 - list;
+        list3.imprime();
     
 	
 	return 0;
