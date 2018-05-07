@@ -36,6 +36,7 @@ class pilha {
         void reconhecedor(pilha& umaPilha);
         void reconhece(pilha& umaPilha);
         int tam();
+        void iguais(pilha& umaPilha,pilha& outraPilha);
 };
 
 pilha :: pilha(){
@@ -200,6 +201,26 @@ void pilha :: reconhece(pilha& umaPilha){
         cout << "FALSE" << endl;
     }
 } 
+
+void pilha :: iguais(pilha& umaPilha,pilha& outraPilha){
+    bool igual = true;
+
+    while(outraPilha.topo != NULL and umaPilha.topo != NULL){
+      
+        string x = desempilha();
+        string y = outraPilha.desempilha();
+       
+        if(x != y){
+            igual = false;
+        }
+    }
+    if(igual){
+        cout << "TRUE" << endl;
+    }
+    else{
+        cout << "FALSE" << endl;
+    }
+}
         
         
 
@@ -210,13 +231,19 @@ int main (){
     pilha p;
     p.empilha("X");
     p.empilha("A");
-  //  p.empilha("C");
     p.empilha("C");
     p.empilha("A");
-    //p.empilha("");
     p.empilha("X");
    
-    p.reconhece(p);
+    pilha p2;
+    
+    p2.empilha("X");
+    p2.empilha("A");
+    p2.empilha("C");
+    p2.empilha("A");
+    p2.empilha("asd");
+    
+    p.iguais(p,p2);
 
     return 0;
 }
