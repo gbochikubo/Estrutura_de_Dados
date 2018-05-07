@@ -82,50 +82,33 @@ bool pilha :: vazia(){
 
 void pilha :: xCy(pilha& umaPilha){
     
-    bool simetrico;
-  
-    int inicio = 0;
-    int fim = tamanho-1;
-    int meio = (inicio + fim)/2;
-  //  cout << meio << endl;
+    bool simetrico = true;
+    //cout << tamanho << endl;
     if(tamanho%2 != 0){
-        Dado vetor1[meio]; 
-        Dado vetor2[meio];
-        Dado mid;
-        for(int i=0; i < meio; i++){
-          
-            vetor1[i] = desempilha();
-    
-        }
-        mid = desempilha();
-    //    cout << "MID :" << mid << endl;
-        for(int i = 0; i < meio; i++){
-  
-           vetor2[i] = desempilha();
-    
-        }
-    
-        int j = meio-1;
         int cont = 0;
-        for(int i = 0 ; i < meio; i ++){
-        //    cout << "VETOR 1 : " << vetor1[i] << " / " << "VETOR 2 : " << vetor2[j] << endl;
-            if(vetor1[i] == vetor2[j]){
-                cont ++;
-            }
-            j--;
+        int meio = (tamanho)/2;
+        pilha outraPilha;
+        while(cont < meio){
+            string x = umaPilha.desempilha();
+            outraPilha.empilha(x);
+            cont++;
         }
-        if((cont == meio)and(mid=="C")){
-            simetrico = true;
-        }
-        else {
+        string mid = umaPilha.desempilha();
+        if(mid != "C"){
             simetrico = false;
         }
-    
+        while(topo != NULL){
+            string p1 = umaPilha.desempilha();
+            string p2 = outraPilha.desempilha();
+            if(p1 != p2){
+                simetrico = false;
+            }
+        } 
     }
-    else {
-        simetrico = false;
+    else{
+        simetrico = true;
     }
-    if ( simetrico == true ) {
+    if(simetrico){
         cout << "VERDADEIRO" << endl;
     }
     else {
@@ -137,121 +120,101 @@ int pilha :: tam(){
     return tamanho;
 }
 
-
-
 void pilha :: reconhecedor(pilha& umaPilha){
-    bool simetrica;
     
-    if(tamanho%4 == 2){
-        Dado vetorA1[tamanho/4];
-        Dado vetorA2[tamanho/4];
-        Dado vetorC[(tamanho/4)*2];
-        Dado B1;
-        Dado B2;
-        for(int i = 0; i < tamanho/4; i++){
-            vetorA1[i] = desempilha();
+    bool simetrico = true;
+    
+    if(tamanho%2 == 0){
+         int cont = 0;
+         int meio = (tamanho)/2;
+         pilha outraPilha;
+        while(cont < meio){
+            string x = umaPilha.desempilha();
+            outraPilha.empilha(x);
+            cont++;
         }
-        B1 = desempilha();
-        for(int i = 0; i < (tamanho/4)*2; i++){
-            vetorC[i] = desempilha();
-        }
-        B2 = desempilha();
-        for(int i = 0; i < tamanho/4; i++){
-            vetorA2[i] = desempilha();
-        }
-        int cont = 0;
-        for(int i = 0; i<tamanho/4; i++){
-            if(vetorA1[i] != vetorA2[i]){
-                cont = -1;
+        while(topo != NULL){
+            string p1 = umaPilha.desempilha();
+            string p2 = outraPilha.desempilha();
+            if(p1 != p2){
+                simetrico = false;
             }
         }
-        for (int i = 0; i < (tamanho/4)*2; i++)
-        {
-            if(vetorC[i] != "C"){
-                cont = -1;
-            }
-            
-        }
-        if((B1 != "B") or (B2 != "B")){
-            cont = -1;
-        }
-        if(cont == 0){
-            simetrica = true;
-        }
-        else {
-            simetrica = false;
-        }
+    }
+    else{
+        simetrico = false;
+    }
+    if(simetrico) {
+        cout << "TRUE" << endl;
     }
     else {
-        simetrica = false;
-    }
-    
-    if(simetrica == true){
-        cout << "VERDADEIRO" << endl;
-    }
-    else {
-        cout << "FALSO" << endl;
-    }
-        
-    
+        cout << "FALSE" << endl;
+        }
 }
 
 void pilha :: reconhece(pilha& umaPilha){
-    bool acabouA=true;
-    bool acabouC=true;
-    bool acabouB=true;
-    string A;
-    string B;
-    string C;
-    int contA=0;
-    int contC=0;
-    int contB=0;
-    string x;
-    while(umaPilha.topo!= NULL){
-        x = desempilha();
-        if((x == "A")and(acabouA)){
-            contA++;
+    bool simetrico = true;
+    
+    if( tamanho%2 == 0 ){
+        int cont = 0;
+         int meio = (tamanho)/2;
+         pilha outraPilha;
+        while(cont < meio){
+            string x = umaPilha.desempilha();
+            outraPilha.empilha(x);
+            cont++;
         }
-        else {
-            acabouA = false;
-            if((x == "C") and (acabouC)){
-                contC++;
-            }
-            else {
-                acabouC = false;
-                if((x == "B") and (acabouB)){
-                contB++;
-                }
-                else {
-                    acabouB = false;
-                }
+        while(topo != NULL){
+            string p1 = umaPilha.desempilha();
+            string p2 = outraPilha.desempilha();
+            if(p1 != p2){
+                simetrico = false;
             }
         }
     }
-    if((contA == contB)and(contA+contB+contC == tamanho)){
-        cout << "VERDADEIRO" << endl;
+    else{
+        int cont = 0;
+        int meio = (tamanho)/2;
+        pilha outraPilha;
+        while(cont < meio){
+            string x = umaPilha.desempilha();
+            outraPilha.empilha(x);
+            cont++;
+        }
+        string mid = umaPilha.desempilha();
+        if(mid != "C"){
+            simetrico = false;
+        }
+        while(topo != NULL){
+            string p1 = umaPilha.desempilha();
+            string p2 = outraPilha.desempilha();
+            if(p1 != p2){
+                simetrico = false;
+            }
+        }
     }
-    else {
-        cout << "FALSO" << endl;
+    if(simetrico){
+        cout << "TRUE" << endl;
     }
-}
-        
+    else{
+        cout << "FALSE" << endl;
+    }
+} 
         
         
 
-    
-    
+
 
 int main (){
     
     pilha p;
+    p.empilha("X");
     p.empilha("A");
-    p.empilha("B");
- 
+  //  p.empilha("C");
     p.empilha("C");
-
-    p.empilha("B");
     p.empilha("A");
+    //p.empilha("");
+    p.empilha("X");
    
     p.reconhece(p);
 
