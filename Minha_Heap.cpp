@@ -9,7 +9,7 @@ class MaxHeap{
     private:
         Data *heap;
         int tamanho;
-        int capacidade
+        int capacidade;
         inline int esquerdo(int i);
         inline int direito(int i);
         inline int pai(int i);
@@ -39,7 +39,7 @@ MaxHeap :: MaxHeap(Data vet[], int tam, int cap){
     else {
         this->capacidade = cap;
     }
-    this->heap = new Data[cap];
+    this->heap = new Data[capacidade];
     for(int i = 0 ;i < tam; i++){
         heap[i] = vet[i];
     }
@@ -63,6 +63,12 @@ int MaxHeap :: direito(int i){
     return (2*i)+2;
 }
 
+void MaxHeap :: arruma (){          // corrige descendo a partir do ultimo nó com filhos
+    for(int i=(tamanho/2)-1; i >= 0; i--){
+        corrigeDescendo(i);
+    }
+}
+
 void MaxHeap :: corrigeDescendo(int i){
     int esq = esquerdo(i);
     int dir = direito(i);
@@ -83,4 +89,75 @@ void MaxHeap :: corrigeDescendo(int i){
     }
 }
     
+void MaxHeap :: corrigeSubindo(int i){
+    int p = pai(i);
+    
+    if(heap[i] > heap[p]){
+        swap(heap[i],heap[p]);
+        corrigeSubindo(p);
+    }
+}
+
+Data MaxHeap :: espiaRaiz(){
+    return heap[0];
+}
+
+Data MaxHeap :: retiraRaiz(){
+    if(tamanho == 0){
+        cerr << "ERRO" << endl;
+        exit(EXIT_FAILURE);
+    }
+    Data aux = heap[0];
+    swap(heap[0],heap[tamanho-1]);
+    tamanho--;
+    corrigeDescendo(0);
+    return aux;
+}
+
+void MaxHeap :: imprime(){
+    for(int i=0; i < tamanho; i++){
+        cout << heap[i] << " ";
+    }
+    cout << endl;
+}
+
+void MaxHeap :: insere(Data d){
+    if(tamanho == capacidade){
+        cerr << "HEAP CHEIA" << endl;
+        exit(EXIT_FAILURE);
+    }
+    heap[tamanho] = d;
+    corrigeSubindo(tamanho);
+    tamanho++;
+}
+    
+
+int main (){
+    
+    int tam = 13;
+    
+    Data vet[] = {50,2,90,20,230,43,8,34,66,100,110,3,13};
+    
+    MaxHeap *h = new MaxHeap(vet,tam);
+    
+    //~ //cout << h->espiaRaiz();
+    h->imprime();
+    
+    for(int i=0; i < tam; i++){
+        //cout << "Raiz : ";
+        cout << h->retiraRaiz() << "  ";
+    }
+    cout << endl;
+    
+    h->imprime();
+    
+    for(int i=0; i < tam; i++){
+        h->insere(vet[i]);
+    }
+    h->imprime();
+    
+    delete h;
+    
+    return 0;
+}
 
