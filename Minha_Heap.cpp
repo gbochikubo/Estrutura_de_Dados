@@ -24,6 +24,7 @@ class MaxHeap{
         Data espiaRaiz();
         Data retiraRaiz();
         void insere(Data d);
+        void heapSort();
 };
 
 MaxHeap :: MaxHeap(int cap){
@@ -130,6 +131,21 @@ void MaxHeap :: insere(Data d){
     corrigeSubindo(tamanho);
     tamanho++;
 }
+
+void MaxHeap :: heapSort(){
+    int quantidade = tamanho;
+    //cout << tamanho << endl;
+    while(tamanho > 1){
+    //    cout << "TROCANDO : " << heap[0] << " com " << heap[tamanho-1] << endl;
+        swap(heap[0],heap[tamanho-1]);
+        tamanho--;
+        corrigeDescendo(0);
+    }
+    tamanho = quantidade;
+}
+
+void MaxHeap :: torneio(int n);
+    
     
 
 int main (){
@@ -140,20 +156,7 @@ int main (){
     
     MaxHeap *h = new MaxHeap(vet,tam);
     
-    //~ //cout << h->espiaRaiz();
-    h->imprime();
-    
-    for(int i=0; i < tam; i++){
-        //cout << "Raiz : ";
-        cout << h->retiraRaiz() << "  ";
-    }
-    cout << endl;
-    
-    h->imprime();
-    
-    for(int i=0; i < tam; i++){
-        h->insere(vet[i]);
-    }
+    h->heapSort();
     h->imprime();
     
     delete h;
