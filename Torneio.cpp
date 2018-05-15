@@ -25,7 +25,7 @@ class Torneio{
         Data retiraRaiz();
         void insere(Data d);
         void heapSort();
-        void removeMaior(int n);
+        void removeMaior();
 };
 
 Torneio :: Torneio (int n){
@@ -75,8 +75,8 @@ void Torneio :: imprime(){
     cout << endl;
 }
 
-void Torneio :: removeMaior (int n){
-    int x = n;
+void Torneio :: removeMaior (){
+    int x = (capacidade/2)+1;
     int vet[x];
     Data maior = heap[0];
     int j=x-1;
@@ -102,9 +102,21 @@ int main(){
     Torneio *h = new Torneio(vet,tam);
     
     h->imprime();
-    h->removeMaior(tam);
+    h->removeMaior();
     h->imprime();
-    h->removeMaior(tam);
+    h->removeMaior();
+    h->imprime();
+    h->removeMaior();
+    h->imprime();
+    h->removeMaior();
+    h->imprime();
+    h->removeMaior();
+    h->imprime();
+    h->removeMaior();
+    h->imprime();
+    h->removeMaior();
+    h->imprime();
+    h->removeMaior();
     h->imprime();
   
     

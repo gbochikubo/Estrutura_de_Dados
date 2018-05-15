@@ -19,6 +19,7 @@ class filav{
         Dado espia();
         void info();
         void depura();
+        void filav();
         
 };
 
@@ -79,6 +80,14 @@ void filav :: depura(){
     }
     cout << endl;
 }
+
+void filav :: inverte (){
+    filav outrafila(capacidade);
+    int cont =0;
+    Dado x;
+    while(cont < tamanho){
+       x = desenfileira();
+       outrafila.
 
 
 

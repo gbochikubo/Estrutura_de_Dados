@@ -33,6 +33,7 @@ class fila{
         int espia();
         bool vazia();
         void limpaFila();
+        void inverte();
 };
 
 fila :: fila(){
@@ -87,6 +88,19 @@ bool fila :: vazia(){
     return (primeiro == NULL);
 }
 
+void fila :: inverte(){
+    int x;
+    if(primeiro != NULL){
+        x = desenfilera();
+        cout << "DESENFILEIROU " << x << endl;
+        inverte();
+        enfilera(x);
+    }
+    //enfilera(x);
+}
+    
+
+
 int main () {
     fila f1;
     
@@ -96,6 +110,8 @@ int main () {
     f1.enfilera(400);
     f1.enfilera(500);
     
+    
+   // f1.inverte();
     
     f1.limpaFila();
     
