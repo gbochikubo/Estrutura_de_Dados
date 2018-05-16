@@ -34,7 +34,10 @@ class fila{
         bool vazia();
         void limpaFila();
         void inverte();
+        void empilha(int d);
+        int desempilha();
 };
+
 
 fila :: fila(){
     this->tamanho = 0;
@@ -98,22 +101,59 @@ void fila :: inverte(){
     }
     //enfilera(x);
 }
-    
+
+int fila :: desempilha(){
+   
+    if(not vazia()) {
+        fila aux;
+        int x;
+        int tam = tamanho;
+        for(int i = 0; i < tam-1; i++){
+            x = desenfilera();
+            aux.enfilera(x);
+        }
+        int topo = desenfilera();
+        tam = aux.tamanho;
+        for(int i = 0; i < tam; i++){
+            x = aux.desenfilera();
+            enfilera(x);
+        }
+    return topo;
+    }
+    else {
+        return -1;
+    }
+}
+
+void fila :: empilha(int d){
+    enfilera(d);
+}
+
+
 
 
 int main () {
     fila f1;
     
-    f1.enfilera(100);
-    f1.enfilera(200);
-    f1.enfilera(300);
-    f1.enfilera(400);
-    f1.enfilera(500);
+    f1.empilha(100);
+    f1.empilha(200);
+    f1.empilha(300);
+    f1.empilha(400);
+    f1.empilha(500);
     
     
    // f1.inverte();
     
-    f1.limpaFila();
+   // f1.limpaFila();
+    
+    f1.empilha(1000);
+    //f1.limpaFila();
+    
+    cout << f1.desempilha() << endl;
+    cout << f1.desempilha() << endl;
+    cout << f1.desempilha() << endl;
+    cout << f1.desempilha() << endl;
+    
     
     return 0;
 }

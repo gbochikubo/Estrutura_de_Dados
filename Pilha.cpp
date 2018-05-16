@@ -30,6 +30,7 @@ class pilha {
         int espia(); 
         bool vazia();
         void limpaPilha();
+        void calculadora();
 };
 
 pilha :: pilha(){
